@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Passport </title> 
+	</head>
+	<body>
+		<h2> Welcome to Health Information System</h2>
+		<% if (!isAuthenticated) { %>
+		<a href = "/login"> Log in here </a>
+		<%} else { %>
+			Hello, <%= user.name %>!
+		<p>	<a href = "/api/data"> Access API here </a> </p>	
+		</br></br></br></br></br>
+		<p>	<a href = "/logout"> Log out here </a> </p>
+		<% } %>
+	</body>
+</html>

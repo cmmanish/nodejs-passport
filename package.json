@@ -1,0 +1,15 @@
+{
+  "name": "howToNode",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "~4.2.0",
+    "mongoose": "latest"
+  },
+  "devDependencies" : {
+    "nodemon" : "*"
+  }
+}
