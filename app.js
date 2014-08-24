@@ -8,8 +8,8 @@ var passportLocal = require('passport-local');
 var passportHttp = require('passport-http');
 
 // by default, brings in routes/index.js
-
-var routes = require('./routes/index')
+var models = require('./models/Cricketer.js');
+var routes = require('./routes/routes_index.js');
 
 var app = new express();
 app.set('view engine', 'ejs'); 
@@ -35,7 +35,6 @@ passport.deserializeUser(function(id, done){
 	done(null, { id:id, name:id });
 });
 
-
 //routes
 app.get('/', function(req, res){
 	res.render('index', {
@@ -53,28 +52,29 @@ app.get('/logout', function(req, res){
 		res.redirect('/');
 });
 
-app.post('/login', passport.authenticate('local'), function(req,res){
-	res.redirect('/')
+app.get('/get/allCricketers', routes.getAll);
+
+app.get('/addCricketer', function(req, res){
+	res.render('addCricketer');
 });
 
 app.get('/api/data', routes.ensureAuthenticated, function(req,res){
 	res.json([
-		{value: 'Sachin'},
-		{value: 'Rahul'},
-		{value: 'Laxman'}
+		{name: 'Sachin'},
+		{name: 'Rahul'},
+		{name: 'Laxman'}
 	]);
 });
 
+//// all the posts are here
+app.post('/login', passport.authenticate('local'), function(req,res){
+	res.redirect('/');
+});
 
+app.post('/addCricketer', routes.addCricketer); // add a new Cricketer
 
 //setting port and listening
 var port = process.env.PORT || 8888 ;
 app.listen(port, function(req,res){
 	console.log('http://127.0.0.1:'+ port + '/');
 });
-
-
-
-
-
-
