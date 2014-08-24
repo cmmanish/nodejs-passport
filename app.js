@@ -5,7 +5,11 @@ var expressSession = require('express-Session');
 
 var passport = require('passport');
 var passportLocal = require('passport-local');
-var passportHttp = require('passport-http')
+var passportHttp = require('passport-http');
+
+// by default, brings in routes/index.js
+var models = require('./models/Cricketer.js');
+var routes = require('./routes/routes_index.js');
 
 var app = new express();
 app.set('view engine', 'ejs'); 
@@ -21,14 +25,7 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new passportLocal.Strategy(function(username, password, done){
-	//pretend this is read database! 
-	if (username == password){
-		done(null,{id:username, name:username});
-	} else {
-		done(null, null);
-	}
-}));
+passport.use(new passportLocal.Strategy(routes.verifyUser));
 
 passport.serializeUser(function(user, done){
 	done(null, user.id);
@@ -38,19 +35,7 @@ passport.deserializeUser(function(id, done){
 	done(null, { id:id, name:id });
 });
 
-//
-function ensureAuthenticated(req, res, next){
-	if (req.isAuthenticated()){
-		next();
-	}else {
-		//res.redirect('/login')
-		res.send(403)
-		//res.status(403).end()
-	}
-
-}
-
-//routes are here
+//routes
 app.get('/', function(req, res){
 	res.render('index', {
 		isAuthenticated: req.isAuthenticated(),
@@ -59,7 +44,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/login', function(req, res){
-		res.render('login');
+		res.render('login')
 });
 
 app.get('/logout', function(req, res){
@@ -67,26 +52,29 @@ app.get('/logout', function(req, res){
 		res.redirect('/');
 });
 
-app.post('/login', passport.authenticate('local'), function(req,res){
-	res.redirect('/')
+app.get('/get/allCricketers', routes.getAll);
+
+app.get('/addCricketer', function(req, res){
+	res.render('addCricketer');
 });
 
-app.get('/api/data', ensureAuthenticated, function(req,res){
+app.get('/api/data', routes.ensureAuthenticated, function(req,res){
 	res.json([
-		{value: 'Sachin'},
-		{value: 'Rahul'},
-		{value: 'Laxman'}
+		{name: 'Sachin'},
+		{name: 'Rahul'},
+		{name: 'Laxman'}
 	]);
 });
+
+//// all the posts are here
+app.post('/login', passport.authenticate('local'), function(req,res){
+	res.redirect('/');
+});
+
+app.post('/addCricketer', routes.addCricketer); // add a new Cricketer
 
 //setting port and listening
 var port = process.env.PORT || 8888 ;
 app.listen(port, function(req,res){
 	console.log('http://127.0.0.1:'+ port + '/');
 });
-
-
-
-
-
-
