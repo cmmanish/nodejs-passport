@@ -1,10 +1,20 @@
 var mongoose= require('mongoose');
-mongoose.connect('mongodb://localhost/User');
+mongoose.connect('mongodb://localhost/Cricketer');
 
-var UserSchema = new mongoose.Schema({
-	_id : String,
-	username: String,
-	password : String
+// define the schema for our user model
+var UserSchema = mongoose.Schema({
+
+    local            : {
+        email        : String,
+        password     : String
+    },
+    facebook         : {
+        id           : String,
+        token        : String,
+        email        : String,
+        name         : String
+    }
 });
 
 module.exports = mongoose.model('User', UserSchema);
+
